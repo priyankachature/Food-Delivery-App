@@ -141,14 +141,14 @@ export default function LoginPage() {
             </div>
 
             {/* Social row (visual only) */}
-            <div className="grid place-items-center">
+            {/* <div className="grid place-items-center">
               <button
                 type="button"
                 className="col-span-1 px-6 rounded-lg border border-gray-300 h-10 sm:h-11 text-sm hover:bg-gray-50"
               >
                 Google
               </button>
-            </div>
+            </div> */}
 
             {/* Link to Signup */}
             <div className="mt-5 sm:mt-6 text-center text-sm text-gray-600">

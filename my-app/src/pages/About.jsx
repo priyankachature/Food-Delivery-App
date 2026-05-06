@@ -8,10 +8,10 @@ const About = () => {
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
-              About <span className="text-amber-600">FreshBite</span>
+              About <span className="text-amber-600">FoodyPaws</span>
             </h1>
             <p className="mt-4 text-slate-600 leading-relaxed">
-              At FreshBite, we believe food is more than a meal—it’s an
+              At FoodyPaws, we believe food is more than a meal—it’s an
               experience. From locally sourced ingredients to chef-crafted
               recipes, we serve dishes that blend rich flavors with warm
               hospitality. Dine-in, take away, or order online—your cravings,
@@ -52,7 +52,7 @@ const About = () => {
             Our Story
           </h2>
           <p className="mt-3 text-slate-600 leading-relaxed">
-            FreshBite started with a simple idea: <em>"Good food should be
+            FoodyPaws started with a simple idea: <em>"Good food should be
             enjoyed, not rushed."</em> What began as a cozy kitchen with big
             dreams is now a favorite destination for food lovers. We’ve stayed
             true to our values—quality, authenticity, and heartfelt service.

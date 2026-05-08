@@ -16,6 +16,7 @@ const StoreContextProvider = (props) => {
       .catch(error => console.error("Error fetching food list:", error));
   }, []);
 
+
    useEffect(() => {
   refreshCartCount();
 }, []);
@@ -70,18 +71,7 @@ const StoreContextProvider = (props) => {
     await refreshCartCount();
   };
 
-  const getTotalCartAmount = () => {
-    let totalAmount = 0;
-    for (const item in cartItems) {
-      if (cartItems[item] > 0) {
-        let itemInfo = food_list.find((product) => product.id === parseInt(item));
-        if (itemInfo) {
-          totalAmount += itemInfo.price * cartItems[item];
-        }
-      }
-    }
-    return totalAmount;
-  };
+
 
   const refreshCartCount = async () => {
   try {
@@ -94,6 +84,17 @@ const StoreContextProvider = (props) => {
   }
 };
 
+const getCartSummary = async () => {
+  try {
+    const res = await axios.get(`http://localhost:8080/api/cart/${userId}/summary`);
+    return res.data; // { subtotal, deliveryFee, taxes, platformFee, total }
+  } catch (error) {
+    console.error("Error fetching cart summary:", error);
+    return null;
+  }
+};
+
+
 
 
 
@@ -105,7 +106,7 @@ const StoreContextProvider = (props) => {
     removeFromCart,
     removeAllFromCart,
     clearCart,
-    getTotalCartAmount,
+    getCartSummary, 
   };
 
   return (

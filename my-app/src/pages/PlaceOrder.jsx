@@ -1,9 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../Context/StoreContext";
+import OrderSummary from "../components/OrderSummary";
 
-const PlaceOrder = () => {
-  const { getTotalCartAmount } = useContext(StoreContext);
+const PlaceOrder = ({ promoCode }) => {
+  // const { getCartSummary } = useContext(StoreContext);
 
   const navigate = useNavigate();
 
@@ -19,6 +20,12 @@ const PlaceOrder = () => {
   });
 
   const [errors, setErrors] = useState({});
+
+  const [addressAdded, setAddressAdded] = useState(false);
+
+  // setAddressAdded(true);
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -56,27 +63,9 @@ const PlaceOrder = () => {
     e.preventDefault();
 
     if (!validate()) return;
-
-    // Option A: Pass to payment via router state
-    // navigate("/payment", {
-    //   state: {
-    //     delivery: { ...form },
-    //     totals: {
-    //       subtotal: getTotalCartAmount(),
-    //       deliveryFee: 4,
-    //       total: getTotalCartAmount() + 4,
-    //     },
-    //   },
-    // });
-
-    // Option B (alternative): Save into context for wider usage
-    // setDeliveryDetails({ ...form });
-    // navigate("/payment");
   };
 
-  // const subtotal = getTotalCartAmount();
-  // const deliveryFee = 4;
-  // const total = subtotal + deliveryFee;
+
 
   return (
     <div className="min-h-screen w-full bg-linear-to-b from-slate-50 via-white to-slate-100">
@@ -102,7 +91,7 @@ const PlaceOrder = () => {
                   name="fullName"
                   value={form.fullName}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
                   placeholder="Full name"
                   autoComplete="name"
                   required
@@ -117,7 +106,7 @@ const PlaceOrder = () => {
                   name="mobile"
                   value={form.mobile}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
                   placeholder="Mobile number"
                   inputMode="numeric"
                   pattern="\d{10}"
@@ -135,7 +124,7 @@ const PlaceOrder = () => {
                 name="address1"
                 value={form.address1}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
                 placeholder="Address line 1"
                 autoComplete="address-line1"
                 required
@@ -150,7 +139,7 @@ const PlaceOrder = () => {
                 name="address2"
                 value={form.address2}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
                 placeholder="Address line 2 (optional)"
                 autoComplete="address-line2"
               />
@@ -162,7 +151,7 @@ const PlaceOrder = () => {
                   name="city"
                   value={form.city}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
                   placeholder="City"
                   autoComplete="address-level2"
                   required
@@ -177,7 +166,7 @@ const PlaceOrder = () => {
                   name="state"
                   value={form.state}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
                   placeholder="State"
                   autoComplete="address-level1"
                   required
@@ -192,7 +181,7 @@ const PlaceOrder = () => {
                   name="pin"
                   value={form.pin}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
                   placeholder="PIN code"
                   inputMode="numeric"
                   pattern="\d{6}"
@@ -214,7 +203,7 @@ const PlaceOrder = () => {
               </Link>
 
               {/* Submit triggers handleSubmit */}
-              <button  onClick={() => navigate('/payment')}
+              <button onClick={() => navigate('/payment')}
                 type="submit"
                 className="rounded-full bg-amber-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-700"
               >
@@ -226,43 +215,15 @@ const PlaceOrder = () => {
 
         {/* RIGHT: Order Summary */}
         <aside className="md:sticky md:top-6">
-          <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
-            <h2 className="text-lg font-semibold">Order Summary</h2>
+          <OrderSummary
+            promoCode={promoCode}
+            showActionButton={true}
+            actionLabel="PROCEED TO PAYMENT"
+            actionPath="/payment"
+            disabled={!addressAdded} // only enabled after address is added/selected
+          />
 
-            <div className="text-sm space-y-2 mt-4">
-              <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span className="font-semibold">${getTotalCartAmount()}</span>
-              </div>
 
-              <div className="flex justify-between">
-                <span>Delivery</span>
-                <span className="font-semibold">$4</span>
-              </div>
-
-              <div className="border-t my-3"></div>
-
-              <div className="flex justify-between font-semibold">
-                <span>Total</span>
-                <span>${getTotalCartAmount()+4}</span>
-              </div>
-            </div>
-
-            {/* Promo (UI only) */}
-            <div className="mt-4">
-              <label className="text-sm font-medium">Have a Promo Code?</label>
-              <div className="flex gap-2 mt-2">
-                <input
-                  type="text"
-                  placeholder="Enter promo code"
-                  className="flex-1 border border-slate-300 rounded-full px-4 py-2 text-sm"
-                />
-                <button className="bg-slate-800 text-white px-4 py-2 rounded-full text-sm">
-                  Apply
-                </button>
-              </div>
-            </div>
-          </div>
         </aside>
       </main>
     </div>

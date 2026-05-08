@@ -1,8 +1,9 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../Context/StoreContext";
+import OrderSummary from "../components/OrderSummary";
 
-const Cart = () => {
+const Cart = ({ promoCode }) => {
   const {
     cartItems,
     food_list,
@@ -11,10 +12,7 @@ const Cart = () => {
     removeFromCart,
     removeAllFromCart,
     clearCart,
-    getTotalCartAmount,
   } = useContext(StoreContext);
-
-  const navigate = useNavigate();
 
 
   // Cart Empty Check
@@ -65,7 +63,7 @@ const Cart = () => {
                         {item.imageUrl ? (
                           <img
                             src={`http://localhost:8080${item.imageUrl}`}
-                             alt={item.name} 
+                            alt={item.name}
                             className="w-full h-full object-cover "
                           />
                         ) : (
@@ -139,13 +137,13 @@ const Cart = () => {
                 </span>
               </div>
               <div className="mt-4 flex justify-end">
-  <button
-    onClick={clearCart}
-    className="text-xs bg-amber-600 text-white font-medium px-3.5 py-2 rounded-full"
-  >
-    Clear Cart
-  </button>
-</div>
+                <button
+                  onClick={clearCart}
+                  className="text-xs bg-amber-600 text-white font-medium px-3.5 py-2 rounded-full"
+                >
+                  Clear Cart
+                </button>
+              </div>
 
             </div>
           )}
@@ -153,58 +151,13 @@ const Cart = () => {
 
         {/* RIGHT ORDER SUMMARY */}
         <aside className="md:sticky md:top-6">
-          <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
-            <h2 className="text-lg font-semibold">Order Summary</h2>
+          <OrderSummary
+            promoCode={promoCode}
+            showActionButton={true}
+            actionLabel="PROCEED TO CHECKOUT"
+            actionPath="/order"
+          />
 
-            <div className="text-sm space-y-2 mt-4">
-              <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span className="font-semibold">${getTotalCartAmount()}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span>Delivery</span>
-                <span className="font-semibold">$4</span>
-              </div>
-
-              <div className="border-t my-3"></div>
-
-              <div className="flex justify-between font-semibold">
-                <span>Total</span>
-                <span>${getTotalCartAmount() + 4}</span>
-              </div>
-            </div>
-
-            {/* PROMO CODE SECTION (kept inside the same card for responsiveness) */}
-            
-
-            <button onClick={() => navigate('/order')}
-              disabled={cartCount === 0}
-              className={`mt-5 w-full rounded-full px-5 py-3 text-sm font-semibold text-white ${
-                isEmpty
-                  ? "bg-slate-300 cursor-not-allowed"
-                  : "bg-amber-600 hover:bg-amber-700"
-              }`}
-            >
-              PROCEED TO CHECKOUT
-            </button>
-
-            <div className="mt-4">
-              <label className="text-sm font-medium">Have a Promo Code?</label>
-
-              <div className="flex gap-2 mt-2">
-                <input
-                  type="text"
-                  placeholder="Enter promo code"
-                  className="flex-1 border border-slate-300 rounded-full px-4 py-2 text-sm"
-                />
-
-                <button className="bg-slate-800 text-white px-4 py-2 rounded-full text-sm">
-                  Apply
-                </button>
-              </div>
-            </div>
-          </div>
         </aside>
       </main>
     </div>

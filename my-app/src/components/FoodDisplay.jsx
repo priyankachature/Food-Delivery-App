@@ -7,7 +7,7 @@ const FoodDisplay = ({ category }) => {
   const { food_list } = useContext(StoreContext);
 
   return (
-    <div className="h-full mt-4 px-4 sm:px-6 lg:px-12 py-8">
+    <div className="h-full  px-4 sm:px-6 lg:px-12 py-8">
       <h2 className="text-2xl font-bold text-center">Top dishes near you</h2>
 
       {/* Responsive grid */}

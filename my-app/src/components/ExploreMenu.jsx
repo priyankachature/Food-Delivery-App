@@ -22,7 +22,7 @@ const ExploreMenu = ({ category, setCategory }) => {
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center gap-4 sm:gap-5">
-      <h1 className="text-[#262626] text-2xl sm:text-3xl font-bold">Explore our menu</h1>
+      <h1 className="text-[#262626] mt-2 text-2xl sm:text-3xl font-bold">Explore our menu</h1>
 
       {/* Make the paragraph readable on small screens */}
       <p className="max-w-[90%] sm:max-w-[70%] md:max-w-[60%] text-[#808080] text-sm sm:text-base leading-6 text-center">
@@ -56,7 +56,7 @@ const ExploreMenu = ({ category, setCategory }) => {
             1024: { slidesPerView: 5,   spaceBetween: 18 },
             1280: { slidesPerView: 6,   spaceBetween: 20 },
           }}
-          className="pb-10!"
+          className="pb-4!"
         >
           {menuList.map((item) => {
             const isActive = category === item.menu_name;

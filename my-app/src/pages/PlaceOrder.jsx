@@ -1,69 +1,95 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { StoreContext } from "../Context/StoreContext";
 import OrderSummary from "../components/OrderSummary";
+
+import AddAddressModal from "../components/AddAddressModal";
 
 const PlaceOrder = ({ promoCode }) => {
   // const { getCartSummary } = useContext(StoreContext);
 
-  const navigate = useNavigate();
-
-  // Controlled form state
-  const [form, setForm] = useState({
-    fullName: "",
-    mobile: "",
-    address1: "",
-    address2: "",
-    city: "",
-    state: "",
-    pin: "",
-  });
-
-  const [errors, setErrors] = useState({});
-
   const [addressAdded, setAddressAdded] = useState(false);
 
-  // setAddressAdded(true);
 
 
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const [addresses, setAddresses] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [editAddress, setEditAddress] = useState(null);
 
-    // Optional: strip spaces for mobile & pin, or keep it simple.
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
 
-  // Basic validation rules
-  const validate = () => {
-    const newErrors = {};
 
-    if (!form.fullName.trim()) newErrors.fullName = "Full name is required.";
-
-    // Basic India-focused check: 10 digits
-    if (!/^\d{10}$/.test(form.mobile.trim())) {
-      newErrors.mobile = "Enter a valid 10-digit mobile number.";
+useEffect(() => {
+  const fetchAddresses = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/api/user/7/addresses");
+      const data = res.data;
+      setAddresses(data);
+      if (data.length === 0) {
+        setShowForm(true); // new user → show form
+      } else {
+        setSelectedAddress(data.find(a => a.isDefault) || data[0]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch addresses", err);
     }
+  };
+  fetchAddresses();
+}, []);
 
-    if (!form.address1.trim()) newErrors.address1 = "Address line 1 is required.";
 
-    if (!form.city.trim()) newErrors.city = "City is required.";
-    if (!form.state.trim()) newErrors.state = "State is required.";
+  // ✅ Add new address
+  const handleSaveAddress = (saved) => {
+    setAddresses(prev => [...prev, saved]);
+    setSelectedAddress(saved);
+    setShowForm(false); // hide form after saving
+    setAddressAdded(true);
+  };
 
-    // Basic PIN (6 digits)
-    if (!/^\d{6}$/.test(form.pin.trim())) {
-      newErrors.pin = "Enter a valid 6-digit PIN code.";
+
+
+
+ const saveEditedAddress = async (formData) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:8080/api/user/7/addresses/${editAddress.id}`,
+        formData,
+        { headers: { "Content-Type": "application/json" } }
+      );
+      const updated = res.data;
+
+      console.log("Address updated successfully:", updated);
+
+      // Replace old address in state with backend response
+      setAddresses(prev => prev.map(a => a.id === updated.id ? updated : a));
+      setSelectedAddress(updated);
+      setEditAddress(null);
+      setAddressAdded(true);
+    } catch (err) {
+      console.error("Failed to update address", err);
     }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const handleDeleteAddress = async (id) => {
+  try {
+    await axios.delete(`http://localhost:8080/api/user/7/addresses/${id}`);
+    setAddresses(prev => prev.filter(a => a.id !== id));
+    if (selectedAddress?.id === id) {
+      setSelectedAddress(null);
+      setAddressAdded(false);
+    }
+  } catch (err) {
+    console.error("Failed to delete address", err);
+  }
+};
 
-    if (!validate()) return;
-  };
+
+
+ 
+
+
+
 
 
 
@@ -83,135 +109,94 @@ const PlaceOrder = ({ promoCode }) => {
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 space-y-5">
           <h2 className="text-lg font-semibold text-slate-900">Delivery Details</h2>
 
-          {/* Wrap the inputs in a form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <input
-                  name="fullName"
-                  value={form.fullName}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
-                  placeholder="Full name"
-                  autoComplete="name"
-                  required
-                />
-                {errors.fullName && (
-                  <p className="mt-1 text-xs text-red-600">{errors.fullName}</p>
-                )}
-              </div>
+          {showForm ? (
+            <AddAddressModal
+              onClose={() => setShowForm(false)}
+              onSave={handleSaveAddress}
+            />
+          ) : (
+            <div className="mt-6">
+              {/* <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-3">
+    Saved Addresses
+  </h3> */}
 
-              <div>
-                <input
-                  name="mobile"
-                  value={form.mobile}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
-                  placeholder="Mobile number"
-                  inputMode="numeric"
-                  pattern="\d{10}"
-                  autoComplete="tel"
-                  required
+              {editAddress && (
+                <AddAddressModal
+                  initialData={editAddress}   // pass current address to pre-fill form
+                  onClose={() => setEditAddress(null)}
+                  onSave={saveEditedAddress}
                 />
-                {errors.mobile && (
-                  <p className="mt-1 text-xs text-red-600">{errors.mobile}</p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <input
-                name="address1"
-                value={form.address1}
-                onChange={handleChange}
-                className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
-                placeholder="Address line 1"
-                autoComplete="address-line1"
-                required
-              />
-              {errors.address1 && (
-                <p className="mt-1 text-xs text-red-600">{errors.address1}</p>
               )}
-            </div>
 
-            <div>
-              <input
-                name="address2"
-                value={form.address2}
-                onChange={handleChange}
-                className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
-                placeholder="Address line 2 (optional)"
-                autoComplete="address-line2"
-              />
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <input
-                  name="city"
-                  value={form.city}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
-                  placeholder="City"
-                  autoComplete="address-level2"
-                  required
-                />
-                {errors.city && (
-                  <p className="mt-1 text-xs text-red-600">{errors.city}</p>
-                )}
+
+              <div className="space-y-4">
+                {addresses.map(addr => (
+                  <div
+                    key={addr.id}
+                    className={`rounded-xl border p-4 shadow-sm transition hover:shadow-md cursor-pointer ${selectedAddress?.id === addr.id ? "border-amber-500" : "border-slate-200"
+                      }`}
+                    onClick={() => {
+                      setSelectedAddress(addr);
+                      setAddressAdded(true);
+                    }}
+
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium text-slate-900">{addr.fullName}</p>
+                        <p className="text-sm text-slate-600">
+                          {addr.address1}
+                          {addr.address2 && `, ${addr.address2}`}<br />
+                          {addr.city}, {addr.state} - {addr.pin}
+                        </p>
+                        <p className="text-sm text-slate-600">📞 {addr.mobile}</p>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button
+                          className="text-xs px-3 py-1 rounded bg-blue-100 text-blue-700 hover:bg-blue-200"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditAddress(addr);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="text-xs px-3 py-1 rounded bg-red-100 text-red-700 hover:bg-red-200"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteAddress(addr.id);
+
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+
+                    {addr.isDefault && (
+                      <span className="mt-2 inline-block text-xs font-semibold text-amber-600">
+                        ★ Default Address
+                      </span>
+                    )}
+                  </div>
+                ))}
               </div>
 
-              <div>
-                <input
-                  name="state"
-                  value={form.state}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
-                  placeholder="State"
-                  autoComplete="address-level1"
-                  required
-                />
-                {errors.state && (
-                  <p className="mt-1 text-xs text-red-600">{errors.state}</p>
-                )}
-              </div>
-
-              <div>
-                <input
-                  name="pin"
-                  value={form.pin}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm outline-amber-100"
-                  placeholder="PIN code"
-                  inputMode="numeric"
-                  pattern="\d{6}"
-                  autoComplete="postal-code"
-                  required
-                />
-                {errors.pin && (
-                  <p className="mt-1 text-xs text-red-600">{errors.pin}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="flex gap-3 pt-2">
-              <Link
-                to="/cart"
-                className="rounded-full px-5 py-2.5 text-sm font-semibold ring-1 ring-slate-300 text-slate-700 hover:bg-slate-50"
+              <button
+                className="mt-5 w-full sm:w-auto px-2 py-2 text-sm font-medium rounded-lg bg-green-600 text-white  hover:bg-green-700"
+                onClick={() => setShowForm(true)}
               >
-                ← Back to Cart
-              </Link>
-
-              {/* Submit triggers handleSubmit */}
-              <button onClick={() => navigate('/payment')}
-                type="submit"
-                className="rounded-full bg-amber-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-700"
-              >
-                Add Address
+                + Add New Address
               </button>
             </div>
-          </form>
+          )}
+
         </section>
+
+
 
         {/* RIGHT: Order Summary */}
         <aside className="md:sticky md:top-6">
@@ -231,3 +216,6 @@ const PlaceOrder = ({ promoCode }) => {
 };
 
 export default PlaceOrder;
+
+
+//  want that the add address form should be for only new user and when user fills that form istaed of that form the filles address should comed thetir form should be not visisble and for old user address list shiuld come or other option such as change address for old address edit dlete and add ne address so in that add new address form will visible

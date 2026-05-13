@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 
 const AddAddress = ({ initialData, onSave }) => {
-  const [form, setForm] = useState(
-    initialData || {
-      fullName: "",
-      mobile: "",
-      address1: "",
-      address2: "",
-      city: "",
-      state: "",
-      pin: "",
-    }
-  );
+    const [form, setForm] = useState(
+        initialData || {
+            fullName: "",
+            mobile: "",
+            address1: "",
+            address2: "",
+            city: "",
+            state: "",
+            pin: "",
+        }
+    );
 
     const [errors, setErrors] = useState({});
 
-    
+
 
 
 
@@ -47,52 +47,46 @@ const AddAddress = ({ initialData, onSave }) => {
     };
 
 
-const handleChange = (e) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
         setForm(prev => ({ ...prev, [name]: value }));
     };
 
 
- const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!validate()) return;
 
-       try {
-      if (initialData && initialData.id) {
-        // Editing → PUT request
-        const res = await axios.put(
-          `http://localhost:8080/api/user/8/addresses/${initialData.id}`,
-          form,
-          { headers: { "Content-Type": "application/json" } }
-        );
-        onSave(res.data); // AddressResponse from backend
-      } else {
-        // Adding new → POST request
-        const res = await axios.post(
-          "http://localhost:8080/api/user/8/addresses",
-          form,
-          { headers: { "Content-Type": "application/json" } }
-        );
-        onSave(res.data); // AddressResponse from backend
-      }
-    } catch (err) {
-      console.error("Failed to save address", err);
-    }
-  };
-
-
-
+        try {
+            const token = localStorage.getItem("token");
+            if (initialData && initialData.id) {
+                // Editing → PUT request
+                const res = await axios.put(
+                    `http://localhost:8080/api/user/addresses/${initialData.id}`,
+                    form,
+                    { headers: { "Content-Type": "application/json", Authorization: token } }
+                );
+                onSave(res.data); // AddressResponse from backend
+            } else {
+                // Adding new → POST request
+                const res = await axios.post(
+                    "http://localhost:8080/api/user/addresses",
+                    form,
+                    { headers: { "Content-Type": "application/json", Authorization: token } }
+                );
+                onSave(res.data); // AddressResponse from backend
+            }
+        } catch (err) {
+            console.error("Failed to save address", err);
+        }
+    };
 
 
-useEffect(() => {
-  if (initialData) {
-    setForm(initialData);
-  }
-}, [initialData]);
-
-
-
-
+    useEffect(() => {
+        if (initialData) {
+            setForm(initialData);
+        }
+    }, [initialData]);
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">

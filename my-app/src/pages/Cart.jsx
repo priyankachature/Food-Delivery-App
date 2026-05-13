@@ -126,7 +126,7 @@ const Cart = ({ promoCode }) => {
                   to="/menu"
                   className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
                 >
-                  ← Continue shopping
+                  ← Add more items
                 </Link>
 
                 <span className="text-sm text-slate-500">

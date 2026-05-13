@@ -94,7 +94,7 @@ export default function Signup() {
 
         <p className="text-center text-gray-700 font-medium text-sm sm:text-base">Sign up your account</p>
 
-        <form onSubmit={handleSubmit} className="mt-5 sm:mt-6 space-y-4" noValidate>
+        <form onSubmit={handleSubmit} className="mt-5 sm:mt-6 space-y-2" noValidate>
           {/* Username */}
           <div>
             <label htmlFor="username" className="block text-sm font-semibold text-gray-700">

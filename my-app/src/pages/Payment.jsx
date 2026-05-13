@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate,useLocation } from "react-router-dom";
 import axios from "axios";
 import OrderSummary from "../components/OrderSummary";
+import { StoreContext } from "../Context/StoreContext";
 
 const Payment = ({ promoCode }) => {
+
+  const { clearCart } = useContext(StoreContext);
+
   const location = useLocation();
   const orderId = location.state?.orderId;
   const initialOrder = location.state?.order;
@@ -31,7 +35,7 @@ const navigate = useNavigate();
     if (orderId && !order) fetchOrder();
   }, [orderId, order]);
 
-  const handlePayment = async () => {
+ const handlePayment = async () => {
   if (!paymentMethod) {
     alert("Please select a payment method");
     return;
@@ -54,6 +58,7 @@ const navigate = useNavigate();
 
     // Simulate gateway success after delay
     setTimeout(async () => {
+      // Step 2: Confirm payment
       const confirmRes = await axios.post("http://localhost:8080/api/payments/confirm", {
         orderId,
         paymentId,
@@ -64,12 +69,24 @@ const navigate = useNavigate();
 
       console.log("Payment confirmed:", confirmRes.data);
 
-      // Update UI with confirmed order
-      setOrder(confirmRes.data);
+      // Step 3: Place order (new API call)
+      const placeRes = await axios.post("http://localhost:8080/api/payments/place", {
+        orderId,
+      }, {
+        headers: { Authorization: token }
+      });
+
+      console.log("Order placed:", placeRes.data);
+
+      // ✅ Clear cart locally
+      await clearCart();
+
+
+      // Update UI with placed order
+      setOrder(placeRes.data);
 
       alert("Payment successful! Your order has been placed.");
-      // Optionally redirect to confirmation page
-      navigate("/orderConfirmation", { state: { order: confirmRes.data } });
+      navigate("/orderConfirmation", { state: { order: placeRes.data } });
     }, 2000);
 
   } catch (err) {

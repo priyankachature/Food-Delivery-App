@@ -9,7 +9,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-  const { cartCount } = useContext(StoreContext);
+  const { cartCount, user, logout } = useContext(StoreContext);
 
   // Close menu when a route is selected
   const closeMenu = () => setOpen(false);
@@ -93,13 +93,23 @@ const Navbar = () => {
        
 
 
-        {/* Desktop Login */}
-        <button
-          onClick={() => navigate('/login')}
-          className="hidden sm:inline-block px-4 sm:px-5 md:px-6 py-1.5 text-xs sm:text-sm font-medium text-black border-2 border-amber-600 rounded-xl outline-none cursor-pointer"
-        >
-          Login
-        </button>
+       {/* Desktop Login/Logout */}
+        {user ? (
+          <button
+            onClick={() => { logout(); navigate('/login'); }}
+            className="hidden sm:inline-block px-4 sm:px-5 md:px-6 py-1.5 text-xs sm:text-sm font-medium text-black border-2 border-amber-600 rounded-xl outline-none cursor-pointer"
+          >
+            Logout
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate('/login')}
+            className="hidden sm:inline-block px-4 sm:px-5 md:px-6 py-1.5 text-xs sm:text-sm font-medium text-black border-2 border-amber-600 rounded-xl outline-none cursor-pointer"
+          >
+            Login
+          </button>
+        )}
+
 
         {/* Mobile Hamburger */}
         <button
@@ -191,12 +201,22 @@ const Navbar = () => {
 
           {/* Mobile Login (inside drawer) */}
           <li className="pt-2">
-            <button
-              onClick={() => { closeMenu(); navigate('/login'); }}
-              className="w-full px-5 py-2 text-sm font-medium text-black border-2 border-amber-600 rounded-xl"
-            >
-              Login
-            </button>
+           {user ? (
+              <button
+                onClick={() => { closeMenu(); logout(); navigate('/login'); }}
+                className="w-full px-5 py-2 text-sm font-medium text-black border-2 border-amber-600 rounded-xl"
+              >
+                Logout
+              </button>
+            ) : (
+              <button
+                onClick={() => { closeMenu(); navigate('/login'); }}
+                className="w-full px-5 py-2 text-sm font-medium text-black border-2 border-amber-600 rounded-xl"
+              >
+                Login
+              </button>
+            )}
+
           </li>
         </ul>
       </div>

@@ -1,14 +1,13 @@
+import {useContext} from 'react';
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
+import { StoreContext } from "../Context/StoreContext";
 
-/**
- * Simple login page:
- * - Proper <form> with labels and autoComplete
- * - On success, navigate to home (you can change this)
- */
-export default function LoginPage() {
+
+const LoginPage = () => {
   const navigate = useNavigate();
+  const { setUser } = useContext(StoreContext);
   const [form, setForm] = useState({ email: "", password: "", remember: false });
   const [error, setError] = useState("");
 
@@ -38,15 +37,21 @@ export default function LoginPage() {
       if (!response.ok) {
         throw new Error(data.message || "Invalid email or password");
       }
+      else {
+        console.log("Login successful, received token:", data);
+      }
       localStorage.setItem("token", `${data.tokenType} ${data.token}`);
 
+      setUser({
+        id: data.userId,
+        name: data.name,
+        email: data.email,
+      });
 
-      navigate("/");
-
+      navigate("/"); // redirect after login
     } catch (err) {
       setError(err.message);
     }
-
 
   };
 
@@ -179,3 +184,4 @@ export default function LoginPage() {
     </main>
   );
 }
+export default LoginPage;

@@ -1,84 +1,123 @@
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const OrderConfirmation = () => {
-  const { state } = useLocation();
+  const location = useLocation();
   const navigate = useNavigate();
-  const order = state?.order;
+  const order = location.state?.order;
 
   if (!order) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-100">
-        <p className="text-gray-600 text-lg">No order found</p>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="bg-white shadow-md rounded-lg p-6 text-center">
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">
+            No order found
+          </h2>
+          <p className="text-slate-600 mb-4">
+            Please place an order before visiting this page.
+          </p>
+          <button
+            onClick={() => navigate("/")}
+            className="px-6 py-3 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition"
+          >
+            Back to Home
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-6">
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-2xl w-full">
-        <h2 className="text-2xl font-bold text-green-600 mb-2">
-          🎉 Order Placed Successfully!
-        </h2>
-        <p className="text-gray-600 mb-6">
-          Thank you for your payment via <span className="font-semibold">{order.paymentMethod}</span>.
-        </p>
-
-        {/* Order Details */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">📦 Order Details</h3>
-          <p><span className="font-medium">Order ID:</span> {order.id}</p>
-          <p><span className="font-medium">Status:</span> {order.status}</p>
-          <p><span className="font-medium">Total Amount:</span> ₹{order.totalAmount}</p>
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+          <h1 className="text-lg sm:text-xl font-bold text-slate-900">
+            Order Confirmation
+          </h1>
+          <div className="flex gap-2 text-xs sm:text-sm text-slate-600">
+            <span className="font-semibold text-green-600">Address</span> ➝
+            <span className="font-semibold text-green-600">Order</span> ➝
+            <span className="font-semibold text-green-600">Payment</span> ➝
+            <span className="font-semibold text-slate-900">Confirmation</span>
+          </div>
         </div>
+      </header>
 
-        {/* Items */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">🛒 Items</h3>
-          {order.items && order.items.length > 0 ? (
-            <ul className="divide-y divide-gray-200">
-              {order.items.map(item => (
-                <li key={item.menuItemId || item.id} className="py-2 flex justify-between">
-                  <span>{item.name} × {item.quantity}</span>
-                  <span className="text-gray-700">₹{item.unitPrice}</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-500">No items found in this order.</p>
-          )}
-        </div>
+      {/* Main Content */}
+      <main className="flex-1 max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6 px-4 py-6 sm:px-6">
+        {/* LEFT: Confirmation Details */}
+        <section className="space-y-6">
+          <div className="bg-white rounded-xl shadow-sm p-6 text-center">
+            <h2 className="text-2xl font-bold text-green-600 mb-2">
+              🎉 Order Placed Successfully!
+            </h2>
+            <p className="text-slate-700 mb-4">
+              Thank you for your purchase. Your order ID is{" "}
+              <span className="font-semibold">{order.id}</span>.
+            </p>
+            <p className="text-slate-600">
+              We’ll notify you when your food is on the way.
+            </p>
+          </div>
 
-        {/* Delivery Address */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">📍 Delivery Address</h3>
-          {order.address ? (
-            <>
-              <p>{order.address.fullName}</p>
-              <p>{order.address.address1}, {order.address.city}</p>
-              <p>{order.address.state} — {order.address.pin}</p>
-              <p>Mobile: {order.address.mobile}</p>
-            </>
-          ) : (
-            <p className="text-gray-500">No address found for this order.</p>
-          )}
-        </div>
+          {/* Delivery Address */}
+          <div className="bg-white rounded-xl shadow-sm p-5">
+            <h2 className="text-sm sm:text-lg font-semibold text-slate-900 mb-3">
+              Delivering To
+            </h2>
+            {order?.address ? (
+              <div className="rounded-lg border border-amber-200 p-4 bg-slate-50">
+                <p className="font-medium">{order.address.fullName}</p>
+                <p className="text-xs sm:text-sm text-slate-600">
+                  {order.address.address1}
+                  {order.address.address2 && `, ${order.address.address2}`}<br />
+                  {order.address.city}, {order.address.state} -{" "}
+                  {order.address.pin}
+                </p>
+                <p className="text-xs sm:text-sm text-slate-600">
+                  📞 {order.address.mobile}
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-red-600">No address found</p>
+            )}
+          </div>
+        </section>
 
-        {/* Buttons */}
-        <div className="flex gap-4">
+        {/* RIGHT: Order Summary */}
+        <aside className="lg:sticky lg:top-6">
+          <div className="bg-white rounded-xl shadow-sm p-5">
+            <h2 className="text-sm sm:text-lg font-semibold text-slate-900 mb-3">
+              Order Summary
+            </h2>
+            <p className="text-slate-700">
+              Total Paid:{" "}
+              <span className="font-bold text-green-600">
+                ₹{order.totalAmount}
+              </span>
+            </p>
+            <p className="text-slate-600 text-sm mt-2">
+              Payment Method: {order.paymentMethod}
+            </p>
+          </div>
+        </aside>
+      </main>
+
+      {/* Footer */}
+      <footer className="sticky bottom-0 bg-white border-t border-slate-200 shadow-md">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs sm:text-base text-slate-700">
+            Order ID: <span className="font-semibold">{order.id}</span>
+          </p>
           <button
             onClick={() => navigate("/")}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+            className="w-full sm:w-auto px-6 py-3 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition"
           >
-            ⬅ Back to Home
-          </button>
-          <button
-            onClick={() => navigate("/orders")}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-          >
-            📦 Track Order
+            Continue Shopping
           </button>
         </div>
-      </div>
+      </footer>
     </div>
   );
 };

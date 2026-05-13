@@ -5,100 +5,145 @@ export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
   const [food_list, setFoodList] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState({});
   const [cartCount, setCartCount] = useState(0);
-  const userId = 8; // Replace with actual logged-in user id
+  const [user, setUser] = useState(null);
 
-
-  
-  // Fetch food items from backend
+  // Fetch logged-in user
   useEffect(() => {
-    axios.get("http://localhost:8080/api/menu")
-      .then(response => setFoodList(response.data))
-      .catch(error => console.error("Error fetching food list:", error));
+    const token = localStorage.getItem("token");
+    if (token) {
+      axios
+        .get("http://localhost:8080/api/auth/me", {
+          headers: { Authorization: token },
+        })
+        .then((res) => setUser(res.data))
+        .catch((err) => console.error("Error fetching user:", err));
+    }
   }, []);
 
-
-   useEffect(() => {
-  refreshCartCount();
-}, []);
-
-
-  // Fetch cart items from backend
+  // Fetch food items
   useEffect(() => {
-    axios.get(`http://localhost:8080/api/cart/${userId}`)
-      .then(response => {
-        const cartMap = {};
-        response.data.forEach(item => {
-          cartMap[item.menuItem.id] = item.quantity;
-        });
-        setCartItems(cartMap);
-      })
-      .catch(error => console.error("Error fetching cart:", error));
+    axios
+      .get("http://localhost:8080/api/menu")
+      .then((response) => setFoodList(response.data))
+      .catch((error) => console.error("Error fetching food list:", error));
   }, []);
 
- 
+  // Refresh cart when user changes
+  useEffect(() => {
+    if (user?.id) {
+      refreshCart();
+      refreshCartCount();
+    }
+  }, [user]);
 
   const refreshCart = async () => {
-    const res = await axios.get(`http://localhost:8080/api/cart/${userId}`);
-    const cartMap = {};
-    res.data.forEach(item => {
-      cartMap[item.menuItem.id] = item.quantity;
-    });
-    setCartItems(cartMap);
+    if (!user?.id) return;
+    try {
+        const token = localStorage.getItem("token");
+       const res = await axios.get(`http://localhost:8080/api/cart`, {
+        headers: { Authorization: token },
+      });
+
+      const cartMap = {};
+      res.data.forEach((item) => {
+        cartMap[item.menuItem.id] = item.quantity;
+      });
+      setCartItems(cartMap);
+    } catch (err) {
+      console.error("Error refreshing cart:", err);
+    }
   };
 
   const addToCart = async (itemId) => {
-    await axios.post(`http://localhost:8080/api/cart/add?userId=${userId}&menuItemId=${itemId}&quantity=1`);
+    if (!user?.id) return;
+    const token = localStorage.getItem("token");
+
+    await axios.post(
+      `http://localhost:8080/api/cart/add?menuItemId=${itemId}&quantity=1`,
+      {},
+      { headers: { Authorization: token } }
+    );
+
     await refreshCart();
     await refreshCartCount();
   };
 
   const removeFromCart = async (itemId) => {
-    await axios.delete(`http://localhost:8080/api/cart/remove?userId=${userId}&menuItemId=${itemId}`);
+    if (!user?.id) return;
+   const token = localStorage.getItem("token");
+    await axios.delete(
+      `http://localhost:8080/api/cart/remove?menuItemId=${itemId}`,
+      { headers: { Authorization: token } }
+    );
+
     await refreshCart();
     await refreshCartCount();
   };
 
   const removeAllFromCart = async (itemId) => {
-  await axios.delete(`http://localhost:8080/api/cart/removeAll?userId=${userId}&menuItemId=${itemId}`);
-  await refreshCart();
-  await refreshCartCount();
-};
+    if (!user?.id) return;
+    const token = localStorage.getItem("token");
+    await axios.delete(
+      `http://localhost:8080/api/cart/removeAll?menuItemId=${itemId}`,
+      { headers: { Authorization: token } }
+    );
 
-
-  const clearCart = async () => {
-    await axios.delete(`http://localhost:8080/api/cart/clear/${userId}`);
     await refreshCart();
     await refreshCartCount();
   };
 
+  const clearCart = async () => {
+    if (!user?.id) return;
+    const token = localStorage.getItem("token");
+    await axios.delete(`http://localhost:8080/api/cart/clear`, {
+      headers: { Authorization: token },
+    });
 
+    await refreshCart();
+    await refreshCartCount();
+  };
 
   const refreshCartCount = async () => {
-  try {
-    const res = await axios.get(`http://localhost:8080/api/cart/${userId}/count`);
-    // If backend returns { "count": 3 }
-    setCartCount(res.data.count);
-   
-  } catch (error) {
-    console.error("Error fetching cart count:", error);
-  }
+    if (!user?.id) return;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`http://localhost:8080/api/cart/count`, {
+        headers: { Authorization: token },
+      });
+
+      setCartCount(res.data.count);
+    } catch (error) {
+      console.error("Error fetching cart count:", error);
+    }
+  };
+
+  const getCartSummary = async () => {
+    if (!user?.id) return null;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`http://localhost:8080/api/cart/summary`, {
+        headers: { Authorization: token },
+      });
+
+      return res.data; // { subtotal, deliveryFee, taxes, platformFee, total }
+    } catch (error) {
+      console.error("Error fetching cart summary:", error);
+      return null;
+    }
+
+  };
+
+   const logout = () => {
+  // Remove token from localStorage
+  localStorage.removeItem("token");
+
+  // Reset user and cart state
+  setUser(null);
+  setCartItems({});
+  setCartCount(0);
 };
-
-const getCartSummary = async () => {
-  try {
-    const res = await axios.get(`http://localhost:8080/api/cart/${userId}/summary`);
-    return res.data; // { subtotal, deliveryFee, taxes, platformFee, total }
-  } catch (error) {
-    console.error("Error fetching cart summary:", error);
-    return null;
-  }
-};
-
-
-
-
 
   const contextValue = {
     food_list,
@@ -108,7 +153,10 @@ const getCartSummary = async () => {
     removeFromCart,
     removeAllFromCart,
     clearCart,
-    getCartSummary, 
+    getCartSummary,
+    user,
+    setUser,
+    logout, 
   };
 
   return (

@@ -2,11 +2,12 @@ import React, { useContext} from 'react'
 import { assets } from '../assets/assets'
 import { StoreContext } from '../Context/StoreContext'
 
-const FoodItem = ({ id, name, price, description, image }) => {
+const FoodItem = ({ id, name, price, description, image , onClickCard}) => {
   const { cartItems, addToCart, removeFromCart } = useContext(StoreContext);
 
   return (
-    <div className="w-full h-full rounded-2xl shadow-2xl overflow-hidden flex flex-col cursor-pointer">
+    <div onClick={onClickCard}
+    className="w-full h-full rounded-2xl shadow-2xl overflow-hidden flex flex-col cursor-pointer">
       <div className="w-full relative">
         <img
           src={image}
@@ -17,12 +18,16 @@ const FoodItem = ({ id, name, price, description, image }) => {
         {!cartItems[id] ? (
           <img
             className="absolute w-8 sm:w-9 bottom-3 sm:bottom-4 right-3 sm:right-4 cursor-pointer rounded-full"
-            onClick={() => addToCart(id)}
+            
+            onClick={(e) =>{ 
+              e.stopPropagation();
+              addToCart(id)}}
             src={assets.add_icon_white}
             alt=""
           />
         ) : (
-          <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 flex items-center gap-2 sm:gap-2.5 px-2 py-1.5 sm:p-1.5 rounded-full bg-white">
+          <div onClick={(e) => e.stopPropagation()}
+          className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 flex items-center gap-2 sm:gap-2.5 px-2 py-1.5 sm:p-1.5 rounded-full bg-white">
             <img
               onClick={() => removeFromCart(id)}
               src={assets.remove_icon_red}
@@ -55,7 +60,7 @@ const FoodItem = ({ id, name, price, description, image }) => {
         </p>
 
         <p className="text-amber-600 text-lg sm:text-xl font-medium mt-auto pt-3">
-          ${price}
+          ₹{price}
         </p>
       </div>
     </div>

@@ -2,7 +2,8 @@ import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { StoreContext } from "../Context/StoreContext";
 
-const OrderSummary = ({ promoCode,
+const OrderSummary = ({ order,
+    promoCode,
     showActionButton = false,
     actionLabel = "Proceed TO Checkout",
     actionPath = "/order",
@@ -14,14 +15,24 @@ const OrderSummary = ({ promoCode,
     const [summary, setSummary] = useState(null);
 
     useEffect(() => {
+         if (!order){
         const fetchSummary = async () => {
             const data = await getCartSummary(promoCode);
             setSummary(data);
         };
         fetchSummary();
-    }, [promoCode, cartItems, cartCount]);
+    }
+    }, [promoCode, cartItems, cartCount, order , getCartSummary]);
 
     const isEmpty = cartCount === 0;
+
+    const subtotal = order ? order.subtotalAmount : summary?.subtotal;
+  const deliveryFee = order ? order.deliveryFee : summary?.deliveryFee;
+  const taxes = order ? order.taxes : summary?.taxes;
+  const platformFee = order ? order.platformFee : summary?.platformFee;
+  const total = order ? order.totalAmount : summary?.total;
+
+
 
     return (
         <div className="w-full rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
@@ -30,26 +41,26 @@ const OrderSummary = ({ promoCode,
             <div className="text-sm space-y-2 mt-4">
                 <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span className="font-semibold">${summary?.subtotal?.toFixed(2) || "0.00"}</span>
+                    <span className="font-semibold">₹{subtotal?.toFixed(2) || "0.00"}</span>
                 </div>
                 <div className="flex justify-between">
                     <span>Delivery Fee</span>
-                    <span className="font-semibold">${summary?.deliveryFee?.toFixed(2) || "0.00"}</span>
+                    <span className="font-semibold">₹{deliveryFee?.toFixed(2) || "0.00"}</span>
                 </div>
                 <div className="flex justify-between">
                     <span>Taxes</span>
-                    <span className="font-semibold">${summary?.taxes?.toFixed(2) || "0.00"}</span>
+                    <span className="font-semibold">₹{taxes?.toFixed(2) || "0.00"}</span>
                 </div>
                 <div className="flex justify-between">
                     <span>Platform Fee</span>
-                    <span className="font-semibold">${summary?.platformFee?.toFixed(2) || "0.00"}</span>
+                    <span className="font-semibold">₹{platformFee?.toFixed(2) || "0.00"}</span>
                 </div>
 
                 <div className="border-t my-3"></div>
 
                 <div className="flex justify-between font-semibold">
                     <span>Total</span>
-                    <span>${summary?.total?.toFixed(2) || "0.00"}</span>
+                    <span>₹{total?.toFixed(2) || "0.00"}</span>
                 </div>
             </div>
 
@@ -63,8 +74,8 @@ const OrderSummary = ({ promoCode,
                         }
                     }}
 
-                    disabled={disabled || isEmpty}
-                    className={`mt-5 w-full rounded-full px-5 py-3 text-sm font-semibold text-white ${disabled || isEmpty
+                    disabled={disabled || (!order && isEmpty)}
+                    className={`mt-5 w-full rounded-full px-5 py-3 text-sm font-semibold text-white ${disabled || (!order && isEmpty)
                         ? "bg-slate-300 cursor-not-allowed"
                         : "bg-amber-600 hover:bg-amber-700"
                         }`}

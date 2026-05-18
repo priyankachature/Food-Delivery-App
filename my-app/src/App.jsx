@@ -13,6 +13,9 @@ import Payment from './pages/Payment';
 import ContactUs from './pages/ContactUs';
 import OrderConfirmation from './pages/OrderConfirmation';
 import ProfilePage from './pages/ProfilePage'; 
+import AdminDashboard from './pages/AdminDashboard'; 
+import TrackOrder from './pages/TrackOrder'; 
+import AdminRoute from './components/AdminRoute';
 import PrivateRoute from './components/PrivateRoute';
 
 
@@ -38,6 +41,8 @@ const App = () => {
           <Route path='/order' element={<PrivateRoute><PlaceOrder /></PrivateRoute>} />
           <Route path='/payment' element={<PrivateRoute><Payment /></PrivateRoute>} />
           <Route path="/orderConfirmation" element={<PrivateRoute><OrderConfirmation /></PrivateRoute>} />
+          <Route path="/track-order/:orderId" element={<PrivateRoute><TrackOrder /></PrivateRoute>} />
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
 
           <Route path="*" element={<div className="p-8">Not Found</div>} />
 

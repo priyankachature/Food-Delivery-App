@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { StoreContext } from '../Context/StoreContext'
 import FoodItem from './FoodItem'
 
-const FoodDisplay = ({ category }) => {
+const FoodDisplay = ({ category, onOpenDetails }) => {
 
   const { food_list } = useContext(StoreContext);
 
@@ -24,6 +24,10 @@ const FoodDisplay = ({ category }) => {
         lg:gap-y-12
       ">
         {food_list.map((item, index) => {
+
+          const compiledImageUrl = `http://localhost:8080${item.imageUrl}`;
+
+          
           if (category === "All" || category === item.category) {
             return (
               <FoodItem
@@ -33,6 +37,7 @@ const FoodDisplay = ({ category }) => {
                 description={item.description}
                 price={item.price}
                 image={`http://localhost:8080${item.imageUrl}`}
+                onClickCard={() => onOpenDetails({ ...item, image: compiledImageUrl })}
               />
             );
           }

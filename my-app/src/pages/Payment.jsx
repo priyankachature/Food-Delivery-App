@@ -9,7 +9,7 @@ const Payment = ({ promoCode }) => {
   const { clearCart, getToken } = useContext(StoreContext);
 
   const location = useLocation();
-  const orderId = location.state?.orderId;
+  const orderId = location.state?.orderId || order?.id;
   const initialOrder = location.state?.order;
 
   // ✅ Use initialOrder if passed from PlaceOrder
@@ -33,7 +33,7 @@ const Payment = ({ promoCode }) => {
     };
     // ✅ Only fetch if we don’t already have the order from PlaceOrder
     if (orderId && !order) fetchOrder();
-  }, [orderId, order]);
+  }, [orderId, order , getToken]);
 
 
 
@@ -88,7 +88,7 @@ const Payment = ({ promoCode }) => {
         setOrder(placeRes.data);
 
         alert("Payment successful! Your order has been placed.");
-        navigate("/orderConfirmation", { state: { order: placeRes.data } });
+        navigate("/orderConfirmation", { state: { orderId: placeRes.data.id, order: placeRes.data } });
       }, 2000);
 
     } catch (err) {
@@ -162,7 +162,7 @@ const Payment = ({ promoCode }) => {
 
         {/* RIGHT: Order Summary */}
         <aside className="lg:sticky lg:top-6">
-          <OrderSummary promoCode={promoCode} showActionButton={false} />
+          <OrderSummary order={order} promoCode={promoCode} showActionButton={false} />
         </aside>
       </main>
 

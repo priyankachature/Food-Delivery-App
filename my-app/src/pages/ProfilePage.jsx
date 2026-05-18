@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { StoreContext } from "../Context/StoreContext";
 import AddAddressModal from "../components/AddAddressModal";
@@ -16,6 +17,7 @@ const ProfilePage = () => {
     // --- NEW: Profile Edit States ---
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [profileForm, setProfileForm] = useState({ name: "", email: "" });
+    const navigate = useNavigate();
 
     // Update profile form when user data is available
     useEffect(() => {
@@ -95,7 +97,7 @@ const ProfilePage = () => {
 
     if (loading) return <div className="min-h-screen flex items-center justify-center text-[#ff6347] font-bold uppercase">FoodyPaws</div>;
 
-    
+
     return (
         <div className="min-h-screen bg-[#fcfcfc] text-[#454545] pb-20">
             <div className="max-w-6xl mx-auto px-4 py-10">
@@ -191,7 +193,11 @@ const ProfilePage = () => {
                             <h3 className="text-xl font-bold text-[#262626] mb-8 tracking-tight">Order History</h3>
                             <div className="space-y-8">
                                 {orders.map((order) => (
-                                    <div key={order.id} className="flex flex-col sm:flex-row gap-6 items-start sm:items-center group">
+                                    <div 
+        key={order.id} 
+        onClick={() => navigate(`/track-order/${order.id}`)}
+        className="flex flex-col sm:flex-row gap-6 items-start sm:items-center group cursor-pointer hover:bg-orange-50/30 p-2 rounded-2xl transition-all"
+    >
                                         <div className="w-20 h-20 rounded-2xl bg-gray-50 flex items-center justify-center border border-gray-100 overflow-hidden shrink-0">
                                             <img
                                                 src={getFoodImage(order.items?.[0]?.menuItemId)}
@@ -210,7 +216,7 @@ const ProfilePage = () => {
                                                     {order.status}
                                                 </span>
                                             </div>
-                                            <p className="mt-2 text-sm font-bold text-[#454545] ">Total: ${order.totalAmount}</p>
+                                            <p className="mt-2 text-sm font-bold text-[#454545] ">Total: ₹{order.totalAmount}</p>
                                         </div>
                                     </div>
                                 ))}

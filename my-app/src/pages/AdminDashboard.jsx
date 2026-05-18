@@ -126,12 +126,12 @@ const AdminDashboard = () => {
                                         <tr key={order.id} className="hover:bg-slate-50/40 transition-colors">
                                             <td className="py-4 px-4 sm:px-6 font-mono font-bold text-slate-900 text-xs sm:text-sm">#{order.id}</td>
                                             <td className="py-4 px-4 sm:px-6">
-                                                <div className="font-bold text-slate-900 text-xs sm:text-sm max-w-[150px] sm:max-w-none truncate sm:whitespace-normal">{order.address?.fullName || order.user?.name || "Guest User"}</div>
-                                                <div className="text-slate-400 text-[11px] sm:text-xs mt-0.5 max-w-[150px] sm:max-w-none truncate sm:whitespace-normal">{order.user?.email || `M: ${order.address?.mobile}`}</div>
+                                                <div className="font-bold text-slate-900 text-xs sm:text-sm max-w-37.5 sm:max-w-none truncate sm:whitespace-normal">{order.address?.fullName || order.user?.name || "Guest User"}</div>
+                                                <div className="text-slate-400 text-[11px] sm:text-xs mt-0.5 max-w-37.5 sm:max-w-none truncate sm:whitespace-normal">{order.user?.email || `M: ${order.address?.mobile}`}</div>
                                             </td>
                                             <td className="py-4 px-4 sm:px-6">
-                                                <div className="space-y-1 min-w-[120px] sm:min-w-0">
-                                                    {order.items?.map((item, idx) => <div key={idx} className="text-xs sm:text-sm font-medium text-slate-600 max-w-[200px] truncate md:max-w-none md:whitespace-normal">{item.name} <span className="text-slate-400 font-bold text-[10px] sm:text-xs ml-0.5">x{item.quantity}</span></div>)}
+                                                <div className="space-y-1 min-w-30 sm:min-w-0">
+                                                    {order.items?.map((item, idx) => <div key={idx} className="text-xs sm:text-sm font-medium text-slate-600 max-w-50 truncate md:max-w-none md:whitespace-normal">{item.name} <span className="text-slate-400 font-bold text-[10px] sm:text-xs ml-0.5">x{item.quantity}</span></div>)}
                                                 </div>
                                             </td>
                                             <td className="py-4 px-4 sm:px-6"><span className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold border ${getStatusBadgeStyle(order.status)}`}>{order.status}</span></td>
@@ -197,7 +197,7 @@ const AdminDashboard = () => {
                                         {menuItems.map((item) => (
                                             <tr key={item.id} className="hover:bg-slate-50/40 transition-colors">
                                                 <td className="py-4 px-4 sm:px-6 font-mono font-bold text-slate-400 text-[11px] sm:text-xs">#{item.id}</td>
-                                                <td className="py-4 px-4 sm:px-6 font-bold text-slate-900 max-w-[120px] truncate md:max-w-none md:whitespace-normal">{item.name}</td>
+                                                <td className="py-4 px-4 sm:px-6 font-bold text-slate-900 max-w-30 truncate md:max-w-none md:whitespace-normal">{item.name}</td>
                                                 <td className="py-4 px-4 sm:px-6 font-semibold text-slate-600">{item.category || "—"}</td>
                                                 <td className="py-4 px-4 sm:px-6 text-slate-500 font-medium hidden md:table-cell">{item.description || "—"}</td>
                                                 <td className="py-4 px-4 sm:px-6 font-mono font-black text-slate-800">₹{item.price}</td>
@@ -233,14 +233,14 @@ const AdminDashboard = () => {
                                             <div className="flex justify-between items-start gap-2">
                                                 <div>
                                                     <span className="text-[10px] bg-slate-200/70 text-slate-600 px-2 py-0.5 rounded font-mono font-bold">MSG #{msg.id}</span>
-                                                    <h4 className="font-black text-slate-900 text-xs sm:text-sm mt-1 tracking-tight truncate max-w-[160px] sm:max-w-none">{msg.subject}</h4>
+                                                    <h4 className="font-black text-slate-900 text-xs sm:text-sm mt-1 tracking-tight truncate max-w-40 sm:max-w-none">{msg.subject}</h4>
                                                 </div>
                                                 <span className="text-[10px] font-semibold text-slate-400 whitespace-nowrap">{msg.createdAt ? new Date(msg.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) : "Just Now"}</span>
                                             </div>
-                                            <p className="text-slate-600 text-xs leading-relaxed bg-white border border-slate-100 p-3 rounded-xl min-h-[60px] font-medium shadow-inner break-words">"{msg.message}"</p>
+                                            <p className="text-slate-600 text-xs leading-relaxed bg-white border border-slate-100 p-3 rounded-xl min-h-15 font-medium shadow-inner wrap-break-word">"{msg.message}"</p>
                                         </div>
                                         <div className="pt-2 border-t border-slate-100 text-[11px] text-slate-500 space-y-0.5 break-all">
-                                            <div className="font-bold text-slate-800 break-words">Sender: {msg.name}</div>
+                                            <div className="font-bold text-slate-800 wrap-break-word">Sender: {msg.name}</div>
                                             <div>Email: <a href={`mailto:${msg.email}`} className="text-blue-600 font-medium hover:underline">{msg.email}</a></div>
                                             {msg.phone && <div>Phone: <span className="font-mono text-slate-700">{msg.phone}</span></div>}
                                         </div>

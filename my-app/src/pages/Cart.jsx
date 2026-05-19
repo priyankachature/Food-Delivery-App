@@ -80,7 +80,7 @@ const Cart = ({ promoCode }) => {
                             {item.name}
                           </h3>
                           <p className="text-base font-semibold text-slate-900">
-                            ${Number(item.price) * qty}
+                            ₹{Number(item.price) * qty}
                           </p>
                         </div>
 

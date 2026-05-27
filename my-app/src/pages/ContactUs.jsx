@@ -210,7 +210,7 @@ const Contact = () => {
               <p className="text-slate-700">
                 <span className="font-semibold">Phone:</span>{" "}
                 <a className="text-amber-700 hover:underline" href="tel:+919876543210">
-                  +91 9860842351
+                  +91 9845673489
                 </a>
               </p>
               <p className="text-slate-700">
@@ -225,7 +225,7 @@ const Contact = () => {
 
               <div className="pt-2 flex flex-wrap gap-2">
                 <a
-                  href="https://wa.me/919860842351?text=Hii%20FoodyPaws!"
+                  href="https://wa.me/919845673489?text=Hii%20FoodyPaws!"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center rounded-full  bg-[#25D366] px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"

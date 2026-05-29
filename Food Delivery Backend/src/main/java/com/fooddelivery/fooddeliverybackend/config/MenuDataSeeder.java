@@ -3,7 +3,7 @@ package com.fooddelivery.fooddeliverybackend.config;
 import com.fooddelivery.fooddeliverybackend.entity.MenuItem;
 import com.fooddelivery.fooddeliverybackend.repository.MenuItemRepository;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.math.BigDecimal;
@@ -12,7 +12,7 @@ import java.util.List;
 @Configuration
 public class MenuDataSeeder {
 
-    @Bean
+    // @Bean
     CommandLineRunner seedMenuItems(MenuItemRepository menuItemRepository) {
         return args -> {
             if (menuItemRepository.count() > 0) {

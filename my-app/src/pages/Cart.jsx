@@ -12,6 +12,7 @@ const Cart = ({ promoCode }) => {
     removeFromCart,
     removeAllFromCart,
     clearCart,
+    BASE_URL
   } = useContext(StoreContext);
 
 
@@ -62,7 +63,7 @@ const Cart = ({ promoCode }) => {
                       <div className="h-24 w-full sm:w-28 overflow-hidden rounded-xl bg-slate-100">
                         {item.imageUrl ? (
                           <img
-                            src={`http://localhost:8080${item.imageUrl}`}
+                            src={`${BASE_URL}${item.imageUrl}`}
                             alt={item.name}
                             className="w-full h-full object-cover "
                           />

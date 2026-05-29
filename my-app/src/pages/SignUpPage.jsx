@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
 import axios from "axios";
+import { StoreContext } from "../Context/StoreContext";
 
 
 export default function Signup() {
   const navigate = useNavigate();
+
+  const { BASE_URL } = useContext(StoreContext);
 
   const [form, setForm] = useState({
     username: "",
@@ -49,7 +52,7 @@ export default function Signup() {
 
     setSubmitting(true);
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/register", {
+      const response = await axios.post(`${BASE_URL}/api/auth/register`, {
         name: form.username,
         email: form.email,
         password: form.password,

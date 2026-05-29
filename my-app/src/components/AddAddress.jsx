@@ -19,9 +19,7 @@ const AddAddress = ({ initialData, onSave }) => {
     );
 
     const [errors, setErrors] = useState({});
-    const { getToken } = useContext(StoreContext);
-
-
+    const { getToken, BASE_URL } = useContext(StoreContext);
 
 
     const validate = () => {
@@ -64,7 +62,7 @@ const AddAddress = ({ initialData, onSave }) => {
             if (initialData && initialData.id) {
                 // Editing → PUT request
                 const res = await axios.put(
-                    `http://localhost:8080/api/user/addresses/${initialData.id}`,
+                    `${BASE_URL}/api/user/addresses/${initialData.id}`,
                     form,
                     { headers: { "Content-Type": "application/json", Authorization: token } }
                 );
@@ -72,7 +70,7 @@ const AddAddress = ({ initialData, onSave }) => {
             } else {
                 // Adding new → POST request
                 const res = await axios.post(
-                    "http://localhost:8080/api/user/addresses",
+                    `${BASE_URL}/api/user/addresses`,
                     form,
                     { headers: { "Content-Type": "application/json", Authorization: token } }
                 );

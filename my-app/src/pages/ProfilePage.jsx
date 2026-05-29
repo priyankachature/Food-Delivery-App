@@ -5,7 +5,7 @@ import { StoreContext } from "../Context/StoreContext";
 import AddAddressModal from "../components/AddAddressModal";
 
 const ProfilePage = () => {
-    const { user, setUser, getToken, logout, food_list } = useContext(StoreContext);
+    const { user, setUser, getToken, logout, food_list , BASE_URL} = useContext(StoreContext);
     const [orders, setOrders] = useState([]);
     const [addresses, setAddresses] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -24,8 +24,8 @@ const ProfilePage = () => {
         const fetchProfileData = async () => {
             try {
                 const [ordersRes, addressRes] = await Promise.all([
-                    axios.get("http://localhost:8080/api/orders/my", config),
-                    axios.get("http://localhost:8080/api/user/addresses", config)
+                    axios.get(`${BASE_URL}/api/orders/my`, config),
+                    axios.get(`${BASE_URL}/api/user/addresses`, config)
                 ]);
                 setOrders(ordersRes.data || []);
                 setAddresses(addressRes.data || []);
@@ -40,7 +40,7 @@ const ProfilePage = () => {
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.put("http://localhost:8080/api/auth/update", profileForm, { headers: { Authorization: getToken() } });
+            const res = await axios.put(`${BASE_URL}/api/auth/update`, profileForm, { headers: { Authorization: getToken() } });
             setUser(res.data);
             setIsEditingProfile(false);
             alert("Profile updated successfully!");
@@ -49,7 +49,7 @@ const ProfilePage = () => {
 
     const getFoodImage = (itemId) => {
         const item = food_list.find(f => f.id === itemId);
-        return item ? `http://localhost:8080${item.imageUrl}` : null;
+        return item ? `${BASE_URL}${item.imageUrl}` : null;
     };
 
     const handleSaveAddress = (saved) => {
@@ -61,7 +61,7 @@ const ProfilePage = () => {
     const handleDeleteAddress = async (id) => {
         if (!window.confirm("Delete this address?")) return;
         try {
-            await axios.delete(`http://localhost:8080/api/user/addresses/${id}`, { headers: { Authorization: getToken() } });
+            await axios.delete(`${BASE_URL}/api/user/addresses/${id}`, { headers: { Authorization: getToken() } });
             setAddresses(prev => prev.filter(a => a.id !== id));
         } catch (err) { console.error("Delete failed", err); }
     };

@@ -3,6 +3,8 @@ import axios from "axios";
 
 export const StoreContext = createContext(null);
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 const StoreContextProvider = (props) => {
     const [food_list, setFoodList] = useState([]);
     const [cartItems, setCartItems] = useState({});
@@ -26,7 +28,7 @@ const StoreContextProvider = (props) => {
         const token = getToken();
         if (token) {
             axios
-                .get("http://localhost:8080/api/auth/me", {
+                .get(`${BASE_URL}/api/auth/me`, {
                     headers: { Authorization: token },
                 })
                 .then((res) => {
@@ -52,7 +54,7 @@ const StoreContextProvider = (props) => {
     // Fetch food items
     useEffect(() => {
         axios
-            .get("http://localhost:8080/api/menu")
+            .get(`${BASE_URL}/api/menu`)
             .then((response) => setFoodList(response.data))
             .catch((error) => console.error("Error fetching food list:", error));
     }, []);
@@ -69,7 +71,7 @@ const StoreContextProvider = (props) => {
         if (!user?.id) return;
         try {
             const token = getToken();
-            const res = await axios.get(`http://localhost:8080/api/cart`, {
+            const res = await axios.get(`${BASE_URL}/api/cart`, {
                 headers: { Authorization: token },
             });
 
@@ -98,7 +100,7 @@ const StoreContextProvider = (props) => {
 
         // Logged-in cart
         await axios.post(
-            `http://localhost:8080/api/cart/add?menuItemId=${itemId}&quantity=1`,
+            `${BASE_URL}/api/cart/add?menuItemId=${itemId}&quantity=1`,
             {},
             { headers: { Authorization: token } }
         );
@@ -128,7 +130,7 @@ const StoreContextProvider = (props) => {
 
         const token = getToken();
         await axios.delete(
-            `http://localhost:8080/api/cart/remove?menuItemId=${itemId}`,
+            `${BASE_URL}/api/cart/remove?menuItemId=${itemId}`,
             { headers: { Authorization: token } }
         );
 
@@ -141,7 +143,7 @@ const StoreContextProvider = (props) => {
         if (!user?.id) return;
         const token = getToken();
         await axios.delete(
-            `http://localhost:8080/api/cart/removeAll?menuItemId=${itemId}`,
+            `${BASE_URL}/api/cart/removeAll?menuItemId=${itemId}`,
             { headers: { Authorization: token } }
         );
 
@@ -152,7 +154,7 @@ const StoreContextProvider = (props) => {
     const clearCart = async () => {
         if (!user?.id) return;
         const token = getToken();
-        await axios.delete(`http://localhost:8080/api/cart/clear`, {
+        await axios.delete(`${BASE_URL}/api/cart/clear`, {
             headers: { Authorization: token },
         });
 
@@ -164,7 +166,7 @@ const StoreContextProvider = (props) => {
         if (!user?.id) return;
         try {
             const token = getToken();
-            const res = await axios.get(`http://localhost:8080/api/cart/count`, {
+            const res = await axios.get(`${BASE_URL}/api/cart/count`, {
                 headers: { Authorization: token },
             });
 
@@ -178,7 +180,7 @@ const StoreContextProvider = (props) => {
         if (!user?.id) return null;
         try {
             const token = getToken();
-            const res = await axios.get(`http://localhost:8080/api/cart/summary`, {
+            const res = await axios.get(`${BASE_URL}/api/cart/summary`, {
                 headers: { Authorization: token },
             });
 
@@ -217,6 +219,7 @@ const StoreContextProvider = (props) => {
         logout,
         getToken,
         authLoading, 
+        BASE_URL,
     };
 
     return (

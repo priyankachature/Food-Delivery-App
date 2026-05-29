@@ -4,7 +4,7 @@ import FoodItem from './FoodItem'
 
 const FoodDisplay = ({ category, onOpenDetails }) => {
 
-  const { food_list } = useContext(StoreContext);
+  const { food_list, BASE_URL } = useContext(StoreContext);
 
   return (
     <div className="h-full  px-4 sm:px-6 lg:px-12 py-8">
@@ -25,7 +25,7 @@ const FoodDisplay = ({ category, onOpenDetails }) => {
       ">
         {food_list.map((item, index) => {
 
-          const compiledImageUrl = `http://localhost:8080${item.imageUrl}`;
+          const compiledImageUrl =`${BASE_URL}${item.imageUrl}`;
 
           
           if (category === "All" || category === item.category) {
@@ -36,7 +36,7 @@ const FoodDisplay = ({ category, onOpenDetails }) => {
                 name={item.name}
                 description={item.description}
                 price={item.price}
-                image={`http://localhost:8080${item.imageUrl}`}
+                image={`${BASE_URL}${item.imageUrl}`}
                 onClickCard={() => onOpenDetails({ ...item, image: compiledImageUrl })}
               />
             );

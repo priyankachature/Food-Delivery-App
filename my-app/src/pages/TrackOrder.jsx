@@ -6,7 +6,7 @@ import axios from "axios";
 const TrackOrder = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
-  const { getToken } = useContext(StoreContext);
+  const { getToken , BASE_URL } = useContext(StoreContext);
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -15,7 +15,7 @@ const TrackOrder = () => {
       try {
         const token = getToken();
         if (!token) return setLoading(false);
-        const res = await axios.get(`http://localhost:8080/api/orders/${orderId}`, {
+        const res = await axios.get(`${BASE_URL}/api/orders/${orderId}`, {
           headers: { Authorization: token }
         });
         if (res.data) setOrder(res.data);

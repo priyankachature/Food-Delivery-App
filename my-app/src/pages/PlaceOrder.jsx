@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import AddAddressModal from "../components/AddAddressModal";
 
 const PlaceOrder = ({ promoCode }) => {
-  const { cartItems, getToken } = useContext(StoreContext);
+  const { cartItems, getToken , BASE_URL } = useContext(StoreContext);
   const [addressAdded, setAddressAdded] = useState(false);
   const [addresses, setAddresses] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -19,7 +19,7 @@ const PlaceOrder = ({ promoCode }) => {
       try {
         const token = getToken();
         if (!token) return;
-        const res = await axios.get("http://localhost:8080/api/user/addresses", { headers: { Authorization: token } });
+        const res = await axios.get(`${BASE_URL}/api/user/addresses`, { headers: { Authorization: token } });
         setAddresses(res.data);
         if (res.data.length === 0) {
           setShowForm(true);
@@ -44,7 +44,7 @@ const PlaceOrder = ({ promoCode }) => {
     try {
       const token = getToken();
       if (!token) return;
-      const res = await axios.put(`http://localhost:8080/api/user/addresses/${editAddress.id}`, formData, { headers: { "Content-Type": "application/json", Authorization: token } });
+      const res = await axios.put(`${BASE_URL}/api/user/addresses/${editAddress.id}`, formData, { headers: { "Content-Type": "application/json", Authorization: token } });
       setAddresses(prev => prev.map(a => a.id === res.data.id ? res.data : a));
       setSelectedAddress(res.data);
       setEditAddress(null);
@@ -58,7 +58,7 @@ const PlaceOrder = ({ promoCode }) => {
     try {
       const token = getToken();
       if (!token) return;
-      await axios.delete(`http://localhost:8080/api/user/addresses/${id}`, { headers: { Authorization: token } });
+      await axios.delete(`${BASE_URL}/api/user/addresses/${id}`, { headers: { Authorization: token } });
       setAddresses(prev => prev.filter(a => a.id !== id));
       if (selectedAddress?.id === id) {
         setSelectedAddress(null);
@@ -78,7 +78,7 @@ const PlaceOrder = ({ promoCode }) => {
     try {
       const token = getToken();
       if (!token) return;
-      const res = await axios.post("http://localhost:8080/api/orders", { addressId: selectedAddress.id, items: itemsArray }, { headers: { "Content-Type": "application/json", Authorization: token } });
+      const res = await axios.post(`${BASE_URL}/api/orders`, { addressId: selectedAddress.id, items: itemsArray }, { headers: { "Content-Type": "application/json", Authorization: token } });
       console.log("Order created:", res.data);
       navigate("/payment", { state: { orderId: res.data.id, order: res.data } });
     } catch (err) {

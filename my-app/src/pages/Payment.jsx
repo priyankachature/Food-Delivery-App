@@ -5,7 +5,7 @@ import OrderSummary from "../components/OrderSummary";
 import { StoreContext } from "../Context/StoreContext";
 
 const Payment = ({ promoCode }) => {
-  const { clearCart, getToken } = useContext(StoreContext);
+  const { clearCart, getToken , BASE_URL } = useContext(StoreContext);
   const location = useLocation();
   const orderId = location.state?.orderId || order?.id;
   const [order, setOrder] = useState(location.state?.order || null);
@@ -16,7 +16,7 @@ const Payment = ({ promoCode }) => {
     if (!orderId || order) return;
     (async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/api/orders/${orderId}`, {
+        const res = await axios.get(`${BASE_URL}/api/orders/${orderId}`, {
           headers: { Authorization: getToken() }
         });
         setOrder(res.data);
@@ -24,18 +24,19 @@ const Payment = ({ promoCode }) => {
     })();
   }, [orderId, order, getToken]);
 
+
   const handlePayment = async () => {
     if (!paymentMethod) return alert("Please select a payment method");
     try {
       const token = getToken();
-      const res = await axios.post("http://localhost:8080/api/payments/initiate", { orderId, method: paymentMethod }, { headers: { Authorization: token } });
+      const res = await axios.post(`${BASE_URL}/api/payments/initiate`, { orderId, method: paymentMethod }, { headers: { Authorization: token } });
       const paymentId = res.data.paymentId;
       alert("Redirecting to payment gateway...");
 
       setTimeout(async () => {
-        const confirmRes = await axios.post("http://localhost:8080/api/payments/confirm", { orderId, paymentId, success: true }, { headers: { Authorization: token } });
+        const confirmRes = await axios.post(`${BASE_URL}/api/payments/confirm`, { orderId, paymentId, success: true }, { headers: { Authorization: token } });
         console.log("Payment confirmed:", confirmRes.data);
-        const placeRes = await axios.post("http://localhost:8080/api/payments/place", { orderId }, { headers: { Authorization: token } });
+        const placeRes = await axios.post(`${BASE_URL}/api/payments/place`, { orderId }, { headers: { Authorization: token } });
         console.log("Order placed:", placeRes.data);
 
         await clearCart();

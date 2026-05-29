@@ -14,11 +14,11 @@ const Home = () => {
     const navigate = useNavigate();
 
     // 1. Instantly pull the global food items from your existing StoreContext
-    const { food_list, addToCart } = useContext(StoreContext);
+    const { food_list, addToCart , BASE_URL } = useContext(StoreContext);
 
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/menu/categories")
+        axios.get(`${BASE_URL}/api/menu/categories`)
             .then((res) => {
                 // Randomize categories and pick 4
                 const randomCats = [...res.data]
@@ -71,7 +71,7 @@ const Home = () => {
                                 {/* Category Image - matching featured pick height */}
                                 <div
                                     style={{
-                                        backgroundImage: `url(http://localhost:8080${c.menu_img})`,
+                                        backgroundImage: `url(${BASE_URL}${c.menu_img})`,
                                         backgroundSize: "cover",
                                         backgroundPosition: "center",
                                     }}
@@ -117,7 +117,7 @@ const Home = () => {
                                 {/* 1. Image URL matches backend property 'imageUrl' */}
                                 <div
                                     style={{
-                                        backgroundImage: item.imageUrl ? `url(http://localhost:8080${item.imageUrl})` : undefined,
+                                        backgroundImage: item.imageUrl ? `url(${BASE_URL}${item.imageUrl})` : undefined,
                                         backgroundSize: "cover",
                                         backgroundPosition: "center",
                                     }}

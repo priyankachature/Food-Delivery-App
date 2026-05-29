@@ -4,13 +4,14 @@ import { StoreContext } from "../Context/StoreContext";
 import Logo from '../components/Logo';
 import searchIcon from '../assets/search_icon.png';
 import cart from '../assets/basket_icon.png';
+import { StoreContext } from '../Context/StoreContext';
 
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-  const { cartCount, user, authLoading } = useContext(StoreContext);
+  const { cartCount, user, authLoading , BASE_URL } = useContext(StoreContext);
 
   // Close menu when a route is selected
   const closeMenu = () => setOpen(false);
@@ -99,7 +100,7 @@ const Navbar = () => {
           user ? (
             <Link to="/profile" className="hidden sm:block">
               <img
-                src="http://localhost:8080/images/profile_icon.png" // ⭐ Use user’s profile image or fallback
+                src={`${BASE_URL}/images/profile_icon.png`} // ⭐ Use user’s profile image or fallback
                 alt="Profile"
                 className="w-7 h-7 rounded-full object-contain cursor-pointer border border-gray-300"
 
@@ -211,7 +212,7 @@ const Navbar = () => {
               user ? (
               <Link to="/profile" onClick={closeMenu} className="w-full flex items-center justify-center gap-2 px-5 py-2 text-sm font-medium text-black border-2 border-amber-600 rounded-xl">
                 <img
-                  src="http://localhost:8080/images/profile_icon.png"
+                  src={`${BASE_URL}/images/profile_icon.png`}
                   alt="Profile"
                   className="w-6 h-6 rounded-full object-contain border border-gray-300"
                 />

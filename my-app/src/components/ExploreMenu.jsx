@@ -2,13 +2,16 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, FreeMode, A11y, Autoplay } from "swiper/modules";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState , useContext } from "react";
+import { StoreContext } from "../Context/StoreContext";
+
 
 const ExploreMenu = ({ category, setCategory }) => {
   const [menuList, setMenuList] = useState([]);
+  const { BASE_URL } = useContext(StoreContext);
 
   useEffect(() =>{
-    axios.get("http://localhost:8080/api/menu/categories")
+    axios.get(`${BASE_URL}/api/menu/categories`)
     .then(res => setMenuList(res.data))
     .catch(err => setMenuList([]));
   }, []);
@@ -64,7 +67,7 @@ const ExploreMenu = ({ category, setCategory }) => {
               <SwiperSlide onClick={() => handleClick(item.menu_name)} key={item.id}>
                 <div className="mt-6 flex flex-col items-center text-center">
                   <img
-                    src={`http://localhost:8080${item.menu_img}`} 
+                    src={`${BASE_URL}${item.menu_img}`} 
                     alt={item.menu_name}
                     loading="lazy"
                     className={`h-16 w-16 sm:h-24 sm:w-24 md:h-28 md:w-28 cursor-pointer rounded-full shadow-2xl 

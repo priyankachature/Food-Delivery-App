@@ -8,7 +8,7 @@ import axios from 'axios';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { setUser } = useContext(StoreContext);
+  const { setUser , BASE_URL } = useContext(StoreContext);
   const [form, setForm] = useState({ email: "", password: "", remember: false });
   const [error, setError] = useState("");
 
@@ -25,7 +25,7 @@ const LoginPage = () => {
 
     // TODO: Replace with your API call
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/login", {
+      const response = await axios.post(`${BASE_URL}/api/auth/login`, {
         email: form.email,
         password: form.password,
       });

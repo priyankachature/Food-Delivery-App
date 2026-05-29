@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { assets } from "../assets/assets";
 import axios from "axios";
+import { StoreContext } from "../Context/StoreContext";
 
 const Contact = () => {
+
+  const { BASE_URL } = useContext(StoreContext);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -41,7 +45,7 @@ const Contact = () => {
     try {
       setStatus({ loading: true, success: "", error: "" });
 
-      const response = await axios.post("http://localhost:8080/api/contact", form);
+      const response = await axios.post(`${BASE_URL}/api/contact`, form);
 
       // 3. Handle Success (MessageResponse from backend)
       setStatus({

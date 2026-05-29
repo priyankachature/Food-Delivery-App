@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useContext } from "react";
 import axios from "axios";
+import { StoreContext } from "../Context/StoreContext";
 
 const AdminDashboard = () => {
+    const {BASE_URL} = useContext(StoreContext);
     const [orders, setOrders] = useState([]);
     const [users, setUsers] = useState([]);
     const [menuItems, setMenuItems] = useState([]);
@@ -22,10 +24,10 @@ const AdminDashboard = () => {
                 const token = getToken();
                 const config = { headers: { Authorization: token } };
                 const [ordersRes, usersRes, menuRes, messagesRes] = await Promise.all([
-                    axios.get("http://localhost:8080/api/admin/orders", config),
-                    axios.get("http://localhost:8080/api/admin/users", config),
-                    axios.get("http://localhost:8080/api/admin/menu", config),
-                    axios.get("http://localhost:8080/api/admin/messages", config)
+                    axios.get(`${BASE_URL}/api/admin/orders`, config),
+                    axios.get(`${BASE_URL}/api/admin/users`, config),
+                    axios.get(`${BASE_URL}/api/admin/menu`, config),
+                    axios.get(`${BASE_URL}/api/admin/messages`, config)
                 ]);
                 setOrders(ordersRes.data || []);
                 setUsers(usersRes.data || []);
@@ -40,7 +42,7 @@ const AdminDashboard = () => {
 
     const updateOrderStatus = async (orderId, newStatus) => {
         try {
-            await axios.put(`http://localhost:8080/api/admin/orders/${orderId}/status`, { status: newStatus }, { headers: { Authorization: getToken() } });
+            await axios.put(`${BASE_URL}/api/admin/orders/${orderId}/status`, { status: newStatus }, { headers: { Authorization: getToken() } });
             setOrders((prev) => prev.map((o) => o.id === orderId ? { ...o, status: newStatus } : o));
         } catch (err) { console.error("Failed to update status parameters:", err); }
     };
@@ -58,7 +60,7 @@ const AdminDashboard = () => {
         try {
             const config = { headers: { Authorization: getToken() } };
             const isAdd = modalMode === "add";
-            const res = await axios[isAdd ? "post" : "put"](`http://localhost:8080/api/admin/menu${isAdd ? "" : `/${targetItemId}`}`, menuForm, config);
+            const res = await axios[isAdd ? "post" : "put"](`${BASE_URL}/api/admin/menu${isAdd ? "" : `/${targetItemId}`}`, menuForm, config);
             setMenuItems((prev) => isAdd ? [...prev, res.data] : prev.map((item) => item.id === targetItemId ? res.data : item));
             setIsModalOpen(false);
         } catch (err) { alert("Something went wrong. Make sure your backend entity auto-increments IDs correctly."); }
@@ -66,7 +68,7 @@ const AdminDashboard = () => {
 
     const toggleItemVisibility = async (item) => {
         try {
-            await axios.put(`http://localhost:8080/api/admin/menu/${item.id}`, { ...item, active: !item.active }, { headers: { Authorization: getToken() } });
+            await axios.put(`${BASE_URL}/api/admin/menu/${item.id}`, { ...item, active: !item.active }, { headers: { Authorization: getToken() } });
             setMenuItems((prev) => prev.map((m) => m.id === item.id ? { ...m, active: !item.active } : m));
         } catch (err) { console.error("Failed to toggle item state:", err); }
     };
@@ -74,7 +76,7 @@ const AdminDashboard = () => {
     const deleteMenuItem = async (itemId) => {
         if (!window.confirm("Are you sure you want to delete this item?")) return;
         try {
-            await axios.delete(`http://localhost:8080/api/admin/menu/${itemId}`, { headers: { Authorization: getToken() } });
+            await axios.delete(`${BASE_URL}/api/admin/menu/${itemId}`, { headers: { Authorization: getToken() } });
             setMenuItems((prev) => prev.filter((item) => item.id !== itemId));
         } catch (err) { console.error("Failed to remove item:", err); }
     };

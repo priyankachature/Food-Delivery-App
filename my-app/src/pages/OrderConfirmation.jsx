@@ -7,7 +7,7 @@ import axios from "axios";
 const OrderConfirmation = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { getToken } = useContext(StoreContext);
+  const { getToken , BASE_URL } = useContext(StoreContext);
   const [order, setOrder] = useState(location.state?.order || null);
   const [loading, setLoading] = useState(!location.state?.order);
   const orderId = location.state?.orderId;
@@ -18,7 +18,7 @@ const OrderConfirmation = () => {
       try {
         const token = getToken();
         if (!token) return setLoading(false);
-        const res = await axios.get(`http://localhost:8080/api/orders/${orderId}`, { headers: { Authorization: token } });
+        const res = await axios.get(`${BASE_URL}/api/orders/${orderId}`, { headers: { Authorization: token } });
         if (res.data) setOrder(res.data);
       } catch (err) {
         console.error("Failed to fetch latest order:", err);

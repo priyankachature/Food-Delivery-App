@@ -56,7 +56,7 @@ public class MenuDataSeeder {
 
             for (MenuSeed seed : seeds) {
                 MenuItem menuItem = new MenuItem();
-                menuItem.setId(seed.id());
+                // menuItem.setId(seed.id());
                 menuItem.setName(seed.name());
                 menuItem.setCategory(seed.category());
                 menuItem.setPrice(BigDecimal.valueOf(seed.price()));

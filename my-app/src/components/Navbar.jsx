@@ -4,7 +4,7 @@ import { StoreContext } from "../Context/StoreContext";
 import Logo from '../components/Logo';
 import searchIcon from '../assets/search_icon.png';
 import cart from '../assets/basket_icon.png';
-import { StoreContext } from '../Context/StoreContext';
+
 
 
 const Navbar = () => {
